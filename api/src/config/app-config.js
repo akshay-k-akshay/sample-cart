@@ -8,6 +8,12 @@ const schema = {
       format: "port",
       default: 3000,
       env: "PORT"
+    },
+    endpoint: {
+      doc: "The endpoint to bind.",
+      format: "url",
+      default: "http://localhost:3000",
+      env: "API_ENDPOINT"
     }
   },
   node_env: {
