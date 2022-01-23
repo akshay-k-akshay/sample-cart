@@ -27,5 +27,9 @@ module.exports = {
 
   update: async (id, data) => {
     return await Products.findByIdAndUpdate(id, data);
+  },
+
+  delete: async (id) => {
+    return await Products.findByIdAndDelete(id);
   }
 };

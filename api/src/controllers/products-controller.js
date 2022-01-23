@@ -42,5 +42,18 @@ module.exports = {
     } catch (error) {
       next(error);
     }
+  },
+
+  delete: async (req, res, next) => {
+    try {
+      await productsService.delete(req.params.id);
+      return res.status(StatusCodes.OK).json({
+        message: "Product deleted successfully",
+        data: {},
+        meta: {}
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };

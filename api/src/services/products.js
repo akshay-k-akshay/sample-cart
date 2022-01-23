@@ -25,5 +25,13 @@ module.exports = {
     data.price =
       data.price === item.price ? item.price : calculatePrice(data.price);
     return await products.update(id, data);
+  },
+
+  delete: async (id) => {
+    const item = await products.findById(id);
+    if (!item) {
+      throw new NotFoundError("Product not found");
+    }
+    return await products.delete(id);
   }
 };
