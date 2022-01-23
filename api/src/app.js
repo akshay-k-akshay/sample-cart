@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 const { morganOption, dbConfig } = require("./config");
 const { PingPong } = require("./routes/ping-pong");
+const { Products } = require("./routes/products");
 const { errorHandler } = require("./middlewares");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(morgan("combined", morganOption));
 
 // routes
 app.use("/", PingPong);
+app.use("/products", Products);
 
 // custom middleware
 app.use(errorHandler);
