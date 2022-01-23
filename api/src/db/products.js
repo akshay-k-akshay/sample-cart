@@ -19,5 +19,13 @@ module.exports = {
   create: async (data) => {
     const product = new Products(data);
     return await product.save();
+  },
+
+  findById: async (id) => {
+    return await Products.findById(id);
+  },
+
+  update: async (id, data) => {
+    return await Products.findByIdAndUpdate(id, data);
   }
 };

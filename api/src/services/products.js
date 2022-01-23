@@ -1,4 +1,11 @@
 const products = require("../db/products");
+const { NotFoundError } = require("../errors");
+
+function calculatePrice(price) {
+  const percentage = 10;
+  const tax = (price * percentage) / 100;
+  return Math.round(price + tax);
+}
 
 module.exports = {
   list: async (page, limit) => {
@@ -6,8 +13,17 @@ module.exports = {
   },
 
   create: async (data) => {
-    const tax = (data.price / 100) * 10;
-    data.price = Math.round(data.price + tax);
+    data.price = calculatePrice(data.price);
     return await products.create(data);
+  },
+
+  update: async (id, data) => {
+    const item = await products.findById(id);
+    if (!item) {
+      throw new NotFoundError("Product not found");
+    }
+    data.price =
+      data.price === item.price ? item.price : calculatePrice(data.price);
+    return await products.update(id, data);
   }
 };

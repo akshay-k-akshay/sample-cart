@@ -29,5 +29,18 @@ module.exports = {
     } catch (error) {
       next(error);
     }
+  },
+
+  update: async (req, res, next) => {
+    try {
+      const result = await productsService.update(req.params.id, req.body);
+      return res.status(StatusCodes.OK).json({
+        message: "Product updated successfully",
+        data: result,
+        meta: {}
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
