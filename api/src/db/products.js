@@ -14,5 +14,10 @@ module.exports = {
         limit
       }
     };
+  },
+
+  create: async (data) => {
+    const product = new Products(data);
+    return await product.save();
   }
 };
