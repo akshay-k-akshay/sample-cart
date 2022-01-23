@@ -8,5 +8,6 @@ Products.post("/", controller.create);
 Products.get("/", controller.list);
 Products.put("/:id", controller.update);
 Products.delete("/:id", controller.delete);
+Products.get("/:id", controller.find);
 
 module.exports = { Products };

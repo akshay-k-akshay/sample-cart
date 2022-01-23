@@ -33,5 +33,13 @@ module.exports = {
       throw new NotFoundError("Product not found");
     }
     return await products.delete(id);
+  },
+  find: async (id) => {
+    const item = await products.findById(id);
+    if (!item) {
+      throw new NotFoundError("Product not found");
+    }
+    return item;
   }
+
 };

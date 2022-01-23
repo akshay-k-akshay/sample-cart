@@ -55,5 +55,18 @@ module.exports = {
     } catch (error) {
       next(error);
     }
+  },
+
+  find: async (req, res, next) => {
+    try {
+      const result = await productsService.find(req.params.id);
+      return res.status(StatusCodes.OK).json({
+        message: "Product found successfully",
+        data: result,
+        meta: {}
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };

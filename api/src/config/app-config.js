@@ -6,13 +6,13 @@ const schema = {
     port: {
       doc: "The port to bind.",
       format: "port",
-      default: 3000,
+      default: 4000,
       env: "PORT"
     },
     endpoint: {
       doc: "The endpoint to bind.",
       format: "url",
-      default: "http://localhost:3000",
+      default: "http://localhost:4000",
       env: "API_ENDPOINT"
     }
   },
