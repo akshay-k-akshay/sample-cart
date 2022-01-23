@@ -1,18 +1,40 @@
 import React, { useState } from 'react';
 
-function AddProduct() {
-    const [files, setFiles] = useState(['']);
+import { ProductsAPI, FilesAPI } from '../api';
+
+function AddProduct(props) {
+    const [images, setImages] = useState(['']);
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
 
     async function submit(event) {
         event.preventDefault();
-        console.log(files);
-        console.log(name);
-        console.log(price);
-        console.log(description);
+        if (images.length === 0) {
+            alert('Please choose image');
+            return;
+        }
+        if (!name || !price || !description) {
+            alert('Please fill all fields');
+            return;
+        }
+        const formData = new FormData();
+        console.log(images);
+        formData.append('files', images);
+        const { status, data } = await FilesAPI.upload(formData);
+        if (status === 200) {
+            setImages([...data.data]);
+        }
 
+        const response = await ProductsAPI.create({
+            images,
+            name,
+            price,
+            description
+        });
+        if (response.status === 200) {
+            props.history.push('/dashboard');
+        }
     }
     return (
         <div className='m-5 p-5'>
@@ -48,31 +70,31 @@ function AddProduct() {
                         <label className="col-sm-4 col-form-label" > Image</label >
                         <div className="col-sm-8" >
                             {
-                                files.map((file, index) => {
+                                images.map((file, index) => {
                                     return (
                                         <div key={index} >
                                             <div className="form-control" >
                                                 <input type="file"
                                                     onChange={(event) => {
-                                                        const newFiles = [...files];
+                                                        const newFiles = [...images];
                                                         newFiles[index] = event.target.files[0];
-                                                        setFiles(newFiles);
+                                                        setImages(newFiles);
                                                     }}
                                                 />
                                                 <div style={{ textAlign: 'end', marginTop: '-30px' }}>
                                                     <span className='btn btn-primary' style={{ borderRadius: '50%' }}
                                                         onClick={() => {
-                                                            const newFiles = [...files];
+                                                            const newFiles = [...images];
                                                             newFiles.push('');
-                                                            setFiles(newFiles);
+                                                            setImages(newFiles);
                                                         }}>+</span>
                                                     {
-                                                        files.length == 1 ? null :
+                                                        images.length == 1 ? null :
                                                             <span className='btn btn-danger' style={{ borderRadius: '50%' }}
                                                                 onClick={() => {
-                                                                    const newFiles = [...files];
+                                                                    const newFiles = [...images];
                                                                     newFiles.splice(index, 1);
-                                                                    setFiles(newFiles);
+                                                                    setImages(newFiles);
                                                                 }}>-</span>
                                                     }
                                                 </div>

@@ -1,17 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { ProductsAPI, FilesAPI } from '../api';
 
-function EditProduct() {
-    const [files, setFiles] = useState(['']);
+function EditProduct(props) {
+    const { id } = useParams();
+
+    const [images, setImages] = useState(['']);
+    const [newFiles, setNewFiles] = useState([]);
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
 
+    useEffect(async () => {
+        const { status, data } = await ProductsAPI.find(id);
+        if (status === 200) {
+            setName(data.data.name);
+            setPrice(data.data.price);
+            setDescription(data.data.description);
+            setImages(data.data.image.length > 0 ? data.data.image : ['']);
+        }
+    }, []);
+
     async function submit(event) {
         event.preventDefault();
-        console.log(files);
-        console.log(name);
-        console.log(price);
-        console.log(description);
+        if (images.length === 0) {
+            alert('Please choose image');
+            return;
+        }
+        if (!name || !price || !description) {
+            alert('Please fill all fields');
+            return;
+        }
+        if (newFiles.length > 0) {
+            const formData = new FormData();
+            formData.append('files', newFiles);
+            const { status, data } = await FilesAPI.upload(formData);
+            if (status === 200) {
+                setImages([...images, ...data.data]);
+            }
+        }
+        const { status } = await ProductsAPI.update(id, {
+            images,
+            name,
+            price,
+            description
+        });
+        if (status === 200) {
+            props.history.push('/dashboard');
+        }
+
     }
     return (
         <div className='m-5 p-5'>
@@ -50,31 +87,33 @@ function EditProduct() {
                         <label className="col-sm-4 col-form-label" > Image</label >
                         <div className="col-sm-8" >
                             {
-                                files.map((file, index) => {
+                                images.map((file, index) => {
                                     return (
                                         <div key={index} >
                                             <div className="form-control" >
                                                 <input type="file"
                                                     onChange={(event) => {
-                                                        const newFiles = [...files];
-                                                        newFiles[index] = event.target.files[0];
-                                                        setFiles(newFiles);
+                                                        const newImages = [...newFiles];
+                                                        newImages[index] = event.target.files[0];
+                                                        setNewFiles([]);
+                                                        setNewFiles(newImages);
+                                                        console.log(newFiles);
                                                     }}
                                                 />
                                                 <div style={{ textAlign: 'end', marginTop: '-30px' }}>
                                                     <span className='btn btn-primary' style={{ borderRadius: '50%' }}
                                                         onClick={() => {
-                                                            const newFiles = [...files];
-                                                            newFiles.push('');
-                                                            setFiles(newFiles);
+                                                            const newImages = [...newFiles];
+                                                            newImages.push('');
+                                                            setNewFiles(newFiles);
                                                         }}>+</span>
                                                     {
-                                                        files.length == 1 ? null :
+                                                        images.length == 1 ? null :
                                                             <span className='btn btn-danger' style={{ borderRadius: '50%' }}
                                                                 onClick={() => {
-                                                                    const newFiles = [...files];
-                                                                    newFiles.splice(index, 1);
-                                                                    setFiles(newFiles);
+                                                                    const newImages = [...newFiles];
+                                                                    newImages.splice(index, 1);
+                                                                    setNewFiles(newFiles);
                                                                 }}>-</span>
                                                     }
                                                 </div>
